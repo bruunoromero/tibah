@@ -1,14 +1,15 @@
-/**
- * This is the API-handler of your app that contains all your API routes.
- * On a bigger app, you will probably want to split this file up into multiple files.
- */
-
+import "reflect-metadata";
 import * as trpcNext from "@trpc/server/adapters/next";
 import { createContext } from "~/server/context";
-import { router } from "~/server/router";
+import { router } from "~/server/routers";
+import { initRegistry } from "~/server/registry";
+import { initFirebase } from "~/utils/firebase";
+
+initFirebase();
+initRegistry();
 
 // export API handler
 export default trpcNext.createNextApiHandler({
-  router: router,
+  router,
   createContext,
 });

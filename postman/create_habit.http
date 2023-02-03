@@ -1,0 +1,7 @@
+POST {{HOST}}/api/habits
+Content-Type: application/json
+X-API-Key: {{TOKEN}}
+
+{
+  "name": "testing3"
+}

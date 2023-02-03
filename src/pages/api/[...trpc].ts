@@ -1,8 +1,15 @@
+import "reflect-metadata";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createOpenApiNextHandler } from "trpc-openapi";
-import { router } from "~/server/router";
+import { createContext } from "~/server/context";
+import { router } from "~/server/routers";
+import { initRegistry } from "~/server/registry";
+import { initFirebase } from "~/utils/firebase";
 
-const trpcHandler = createOpenApiNextHandler({ router: router });
+initFirebase();
+initRegistry();
+
+const trpcHandler = createOpenApiNextHandler({ router, createContext });
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {
   return trpcHandler(req, res);

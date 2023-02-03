@@ -1,0 +1,2 @@
+GET {{HOST}}/api/habits
+X-API-Key: {{TOKEN}}
