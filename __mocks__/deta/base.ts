@@ -2,6 +2,7 @@ import ObjectPath from "object-path";
 import {
   FetchOptions,
   InsertOptions,
+  PutManyOptions,
   PutOptions,
   UpdateOptions,
 } from "deta/dist/types/types/base/request";
@@ -10,6 +11,7 @@ import {
   FetchResponse,
   GetResponse,
   InsertResponse,
+  PutManyResponse,
   PutResponse,
   UpdateResponse,
 } from "deta/dist/types/types/base/response";
@@ -20,6 +22,7 @@ import {
 } from "deta/dist/types/types/basic";
 import { Collection } from "lokijs";
 import { uid } from "rand-token";
+import { Base } from "deta";
 
 const isObject = (data: DetaType): data is ObjectType =>
   typeof data === "object" && !Array.isArray(data);
@@ -148,6 +151,8 @@ export class BaseClass {
   ): Promise<InsertResponse> {
     const theKey = getKey(data, key);
 
+    if (theKey && (await this._get(theKey))) throw new Error();
+
     const entity = this.base.insertOne(toEntity(data, theKey, options));
 
     if (!entity) throw new Error();
@@ -217,12 +222,27 @@ export class BaseClass {
     return this.insert(data, key, options);
   }
 
+  async putMany(
+    items: DetaType[],
+    options?: PutManyOptions
+  ): Promise<PutManyResponse> {
+    const entities = await Promise.all(
+      items.map((item) => this.put(item, undefined, options))
+    );
+
+    return {
+      processed: {
+        items: entities,
+      },
+    };
+  }
+
   async get(key: string): Promise<GetResponse> {
-    const entity = this.base.by("key", key);
+    const entity = await this._get(key);
 
     if (!entity) return null;
 
-    return entity;
+    return fromLoki(entity);
   }
 
   async delete(key: string): Promise<DeleteResponse> {

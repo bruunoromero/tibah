@@ -1,3 +1,3 @@
-import { Deta as MockDeta } from "__utils__/deta/in-memory";
+import { Deta as MockDeta } from "./in-memory";
 
 export const Deta = MockDeta;

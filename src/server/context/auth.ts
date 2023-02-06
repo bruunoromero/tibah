@@ -1,4 +1,3 @@
-import Deta from "deta/dist/types/deta";
 import { NextApiRequest } from "next";
 import {
   AuthUser,
