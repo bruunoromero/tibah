@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, expectTypeOf, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { BaseClass } from "./base";
 import { Deta, resetDb } from "./in-memory";
 
