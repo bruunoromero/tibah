@@ -22,7 +22,6 @@ import {
 } from "deta/dist/types/types/basic";
 import { Collection } from "lokijs";
 import { uid } from "rand-token";
-import { Base } from "deta";
 
 const isObject = (data: DetaType): data is ObjectType =>
   typeof data === "object" && !Array.isArray(data);

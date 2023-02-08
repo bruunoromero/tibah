@@ -1,33 +1,27 @@
-import Loki, { Collection, LokiMemoryAdapter } from "lokijs";
+import { ObjectType } from "deta/dist/types/types/basic";
+import Loki, { Collection } from "lokijs";
+import { testContext } from "__utils__/test-context";
 import { BaseClass } from "./base";
 
 class DetaClass {
   private readonly db: Loki;
-  constructor() {
-    this.db = globalThis.db;
+  constructor(db?: Loki) {
+    this.db = db ?? testContext.db;
   }
 
-  private getOrCreateCollection(name: string): Collection<any> {
-    const collection = this.db.getCollection(name);
+  getOrCreateCollection<T extends ObjectType = any>(
+    name: string
+  ): Collection<T> {
+    const collection = this.db.getCollection<T>(name);
 
     if (collection) return collection;
 
-    return this.db.addCollection(name, { unique: ["key"] });
+    return this.db.addCollection(name, { unique: ["key"] as any });
   }
 
-  Base(name: string): BaseClass {
+  Base(name: string) {
     return new BaseClass(this.getOrCreateCollection(name));
   }
 }
-
-globalThis.db = new Loki("deta.test.db", {
-  adapter: new LokiMemoryAdapter(),
-});
-
-export const resetDb = () => {
-  for (const collection of globalThis.db.collections) {
-    globalThis.db.getCollection(collection.name).clear({ removeIndices: true });
-  }
-};
 
 export const Deta = () => new DetaClass();

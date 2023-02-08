@@ -1,13 +1,23 @@
+import "jest-extended";
+import "jest-extended/all";
+import "expect-more-jest";
 import "reflect-metadata";
 import Loki from "lokijs";
 import { initRegistry } from "~/server/registry";
-import { expect, vi } from "vitest";
+import { testContext } from "__utils__/test-context";
 
 declare global {
   var db: Loki;
 }
 
-vi.mock("deta");
-vi.mock("envsafe");
+jest.mock("deta");
+jest.mock("envsafe");
+jest.mock("next-firebase-auth");
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  testContext.resetDb();
+  testContext.resetCurrentUser();
+});
 
 initRegistry();

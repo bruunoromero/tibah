@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { testContext } from "__utils__/test-context";
 import { BaseClass } from "./base";
-import { Deta, resetDb } from "./in-memory";
+import { Deta } from "./in-memory";
 
 let base: BaseClass;
 
 beforeEach(() => {
-  resetDb();
+  testContext.resetDb();
   base = Deta().Base("users");
 });
 
@@ -14,7 +14,7 @@ const leia = { key: "5678", name: "leia", age: 22 };
 const han = { key: "9012", name: "han", age: 28 };
 const yoda = { key: "3456", name: "yoda", age: 77 };
 
-const getCollection = () => globalThis.db.getCollection("users");
+const getCollection = () => testContext.db.getCollection("users");
 
 const seedDb = () => {
   const users = getCollection();
@@ -177,10 +177,8 @@ describe("Base", () => {
     });
 
     it("should query using dot notation", async () => {
-      const users = globalThis.db.getCollection("users");
-
-      users.insert({ key: "1234", data: { age: 22 } });
-      users.insert({ key: "5678", data: { age: 27 } });
+      getCollection().insert({ key: "1234", data: { age: 22 } });
+      getCollection().insert({ key: "5678", data: { age: 27 } });
 
       const res = await base.fetch({ "data.age": 27 });
 
@@ -193,17 +191,15 @@ describe("Base", () => {
     });
 
     it("should query using or operator", async () => {
-      const users = globalThis.db.getCollection("users");
-
-      users.insert({
+      getCollection().insert({
         key: "1234",
         data: { profile: { age: 22, name: "luke" } },
       });
-      users.insert({
+      getCollection().insert({
         key: "5678",
         data: { profile: { age: 27, name: "chewbacca" } },
       });
-      users.insert({
+      getCollection().insert({
         key: "9012",
         data: { profile: { age: 77, name: "yoda" } },
       });
@@ -230,7 +226,7 @@ describe("Base", () => {
       const user = await base.insert({ name: "luke" });
 
       expect(user.name).toEqual("luke");
-      expect(user.key).toBeTypeOf("string");
+      expect(typeof user.key).toBe("string");
       expect(getCollection().find()).toMatchObject([{ name: "luke" }]);
     });
 
@@ -247,7 +243,7 @@ describe("Base", () => {
       const user = await base.insert([1, 2, 3]);
 
       expect(user.value).toEqual([1, 2, 3]);
-      expect(user.key).toBeTypeOf("string");
+      expect(typeof user.key).toBe("string");
       expect(getCollection().find()).toMatchObject([{ value: [1, 2, 3] }]);
     });
 
@@ -255,7 +251,7 @@ describe("Base", () => {
       const user = await base.insert("luke");
 
       expect(user.value).toEqual("luke");
-      expect(user.key).toBeTypeOf("string");
+      expect(typeof user.key).toBe("string");
       expect(getCollection().find()).toMatchObject([{ value: "luke" }]);
     });
 
@@ -263,7 +259,7 @@ describe("Base", () => {
       const user = await base.insert(22);
 
       expect(user.value).toEqual(22);
-      expect(user.key).toBeTypeOf("string");
+      expect(typeof user.key).toBe("string");
       expect(getCollection().find()).toMatchObject([{ value: 22 }]);
     });
 
@@ -271,7 +267,7 @@ describe("Base", () => {
       const user = await base.insert(false);
 
       expect(user.value).toEqual(false);
-      expect(user.key).toBeTypeOf("string");
+      expect(typeof user.key).toBe("string");
       expect(getCollection().find()).toMatchObject([{ value: false }]);
     });
 
@@ -289,7 +285,7 @@ describe("Base", () => {
       const user = await base.put({ name: "luke" });
 
       expect(user!.name).toEqual("luke");
-      expect(user!.key).toBeTypeOf("string");
+      expect(typeof user!.key).toBe("string");
       expect(getCollection().find()).toMatchObject([{ name: "luke" }]);
     });
 
@@ -306,7 +302,7 @@ describe("Base", () => {
       const user = await base.put([1, 2, 3]);
 
       expect(user!.value).toEqual([1, 2, 3]);
-      expect(user!.key).toBeTypeOf("string");
+      expect(typeof user!.key).toBe("string");
       expect(getCollection().find()).toMatchObject([{ value: [1, 2, 3] }]);
     });
 
@@ -314,7 +310,7 @@ describe("Base", () => {
       const user = await base.put("luke");
 
       expect(user!.value).toEqual("luke");
-      expect(user!.key).toBeTypeOf("string");
+      expect(typeof user!.key).toBe("string");
       expect(getCollection().find()).toMatchObject([{ value: "luke" }]);
     });
 
@@ -322,7 +318,7 @@ describe("Base", () => {
       const user = await base.put(22);
 
       expect(user!.value).toEqual(22);
-      expect(user!.key).toBeTypeOf("string");
+      expect(typeof user!.key).toBe("string");
       expect(getCollection().find()).toMatchObject([{ value: 22 }]);
     });
 
@@ -330,7 +326,7 @@ describe("Base", () => {
       const user = await base.put(false);
 
       expect(user!.value).toEqual(false);
-      expect(user!.key).toBeTypeOf("string");
+      expect(typeof user!.key).toBe("string");
       expect(getCollection().find()).toMatchObject([{ value: false }]);
     });
 

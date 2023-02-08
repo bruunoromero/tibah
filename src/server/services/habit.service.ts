@@ -20,8 +20,10 @@ export class HabitService {
     });
   }
 
-  async all(): Promise<Habit[]> {
-    const { items } = await this.habitRepository.fetch();
+  async allByUser(userId: string): Promise<Habit[]> {
+    const { items } = await this.habitRepository.fetch({
+      userId: { $eq: userId },
+    });
 
     return items;
   }

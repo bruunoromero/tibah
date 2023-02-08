@@ -50,11 +50,28 @@ export const repository = <T extends Entity>(
     ): Promise<T | null> {
       const { count, items } = await this.fetch(query, options);
 
-      if (count !== 1) {
+      if (count > 1) {
+        throw new TRPCError({ code: "CONFLICT" });
+      }
+
+      if (count === 0) {
         return null;
       }
 
       return items[0];
+    }
+
+    async fetchOne(
+      query?: QueryData<T> | QueryData<T>[],
+      options?: FetchOptions
+    ): Promise<T> {
+      const data = await this.fetchMaybeOne(query, options);
+
+      if (!data) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return data;
     }
 
     async ensureUnique(
@@ -69,19 +86,6 @@ export const repository = <T extends Entity>(
           message: "Entity should be unique",
         });
       }
-    }
-
-    async fetchOne(
-      query?: QueryData<T> | QueryData<T>[],
-      options?: FetchOptions
-    ): Promise<T> {
-      const data = await this.fetchMaybeOne(query, options);
-
-      if (!data) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
-
-      return data;
     }
 
     async get(key: string): Promise<T> {
